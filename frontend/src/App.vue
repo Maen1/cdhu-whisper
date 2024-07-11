@@ -1,0 +1,109 @@
+<template>
+  <div class="min-h-screen bg-gray-100 flex items-center justify-center p-6">
+    <div class="bg-white shadow-md rounded-lg p-8 w-full max-w-3xl">
+      <h1 class="text-2xl font-medium mb-6 text-center">Upload Audio for Transcription</h1>
+      <form @submit.prevent="handleSubmit" class="space-y-4">
+        <input
+          type="file"
+          multiple
+          @change="handleFileChange"
+          required
+          class="block w-full text-sm text-gray-900 border border-gray-300 rounded cursor-pointer bg-gray-50 focus:outline-none p-1"
+        />
+        <button
+          type="submit"
+          class="w-full bg-blue-500 hover:bg-blue-700 text-white font-medium py-2 px-2 rounded focus:outline-none focus:shadow-outline"
+        >
+          Transcribe
+        </button>
+      </form>
+
+      <!-- Loading Indicator -->
+      <div v-if="isLoading" class="flex justify-center mt-4">
+        <p> transcription...</p>
+      </div>
+
+      <div v-for="(transcription, filename) in results" :key="filename" class="mt-6">
+        <h3 class="text-lg font-medium text-gray-800">{{ filename }}</h3>
+        <pre class="bg-gray-100 p-4 rounded text-wrap overflow-auto max-h-64">{{ transcription["text"] }}</pre>
+        <div class="mt-2 flex space-x-2">
+          <button
+            @click="downloadTranscription(filename, transcription.text, 'txt')"
+            class="bg-green-500 hover:bg-green-700 text-white font-medium py-1 px-2 rounded focus:outline-none focus:shadow-outline"
+          >
+            Download as Text
+          </button>
+          <button
+            @click="downloadTranscription(filename, JSON.stringify(transcription.json, null, 2), 'json')"
+            class="bg-yellow-500 hover:bg-yellow-700 text-white font-medium py-1 px-2 rounded focus:outline-none focus:shadow-outline"
+          >
+            Download as JSON
+          </button>
+          <button
+            @click="downloadTranscription(filename, transcription.srt, 'srt')"
+            class="bg-blue-500 hover:bg-blue-700 text-white font-medium py-1 px-2 rounded focus:outline-none focus:shadow-outline"
+          >
+            Download as SRT
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import { ref } from 'vue';
+
+export default {
+  setup() {
+    const files = ref([]);
+    const results = ref({});
+    const isLoading = ref(false);
+
+    const handleFileChange = (event) => {
+      files.value = event.target.files;
+    };
+
+    const handleSubmit = async () => {
+      isLoading.value = true;
+      const formData = new FormData();
+      for (const file of files.value) {
+        formData.append('files', file);
+      }
+
+      const response = await fetch('http://localhost:8000/transcribe/', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+      results.value = data;
+      isLoading.value = false;
+    };
+
+    const downloadTranscription = (filename, content, format) => {
+      const blob = new Blob([content], { type: 'text/plain' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${filename}.${format}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    };
+
+    return {
+      handleFileChange,
+      handleSubmit,
+      downloadTranscription,
+      results,
+      isLoading,
+    };
+  },
+};
+</script>
+
+<style>
+/* Optionally, you can add additional styles here */
+</style>

@@ -1,0 +1,89 @@
+# Ignore files related to FastAPI backend
+
+# Python
+backend/*.pyc
+backend/__pycache__/
+backend/*.pyo
+backend/*.pyd
+backend/*.pdb
+backend/*.egg
+backend/*.egg-info/
+backend/dist/
+backend/build/
+backend/env/
+backend/venv/
+backend/ENV/
+backend/.venv/
+backend/.mypy_cache/
+backend/.pytest_cache/
+backend/.coverage
+backend/coverage.xml
+backend/*.cover
+backend/*.log
+backend/*.sqlite3
+backend/*.db
+backend/*.sqlite
+
+# FastAPI specific
+backend/*.env
+backend/instance/
+backend/instance/*
+
+# Ignore files related to Vite frontend
+
+# Node.js
+frontend/node_modules/
+frontend/npm-debug.log
+frontend/yarn-error.log
+frontend/yarn-debug.log
+
+# Vite/Vue.js
+frontend/dist/
+frontend/.vite/
+frontend/.vitepress/cache/
+frontend/.vuepress/
+frontend/.vuepress/dist/
+frontend/*.local
+frontend/*.local.*
+frontend/*.config.js
+
+# General ignores
+
+# Visual Studio Code
+.vscode/
+.vscode/settings.json
+.vscode/tasks.json
+.vscode/launch.json
+.vscode/extensions.json
+.vscode/*.code-workspace
+.history/
+
+# System files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msm
+*.msp
+*.lnk
+
+# Logs and databases
+*.log
+*.sql
+*.sqlite
+*.db
+
+# Sphinx documentation
+docs/_build/
+target/
+out/
+.idea/
+
+# MacOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
