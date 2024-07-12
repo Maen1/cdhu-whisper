@@ -9,7 +9,7 @@ import os
 app = FastAPI()
 
 # Load Whisper model
-model = whisper.load_model("base")
+model = whisper.load_model("tiny")
 
 
 # Configure CORS

@@ -23,6 +23,29 @@
         <p> transcription...</p>
       </div>
 
+
+      <!-- Button to Download All Transcriptions -->
+      <div v-if="Object.keys(results).length > 0" class="mt-6">
+        <button
+          @click="downloadAllTranscriptions('txt')"
+          class="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        >
+          Download All as Text
+        </button>
+        <button
+          @click="downloadAllTranscriptions('srt')"
+          class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-2"
+        >
+          Download All as SRT
+        </button>
+        <button
+          @click="downloadAllTranscriptions('json')"
+          class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-2"
+        >
+          Download All as Json
+        </button>
+      </div>
+
       <div v-for="(transcription, filename) in results" :key="filename" class="mt-6">
         <h3 class="text-lg font-medium text-gray-800">{{ filename }}</h3>
         <pre class="bg-gray-100 p-4 rounded text-wrap overflow-auto max-h-64">{{ transcription["text"] }}</pre>
@@ -53,6 +76,9 @@
 
 <script>
 import { ref } from 'vue';
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
+
 
 export default {
   setup() {
@@ -93,10 +119,29 @@ export default {
       window.URL.revokeObjectURL(url);
     };
 
+    const downloadAllTranscriptions = async (format) => {
+      const zip = new JSZip();
+      for (const [filename, transcription] of Object.entries(results.value)) {
+        let content;
+        if (format === 'txt') {
+          content = transcription.text;
+        } else if (format === 'srt') {
+          content = transcription.srt;
+        }
+        else if (format === 'json') {
+          content = JSON.stringify(transcription.json, null, 2);
+        }
+        zip.file(`${filename}.${format}`, content);
+      }
+      const blob = await zip.generateAsync({ type: 'blob' });
+      saveAs(blob, `transcriptions.${format}.zip`);
+    };
+
     return {
       handleFileChange,
       handleSubmit,
       downloadTranscription,
+      downloadAllTranscriptions,
       results,
       isLoading,
     };

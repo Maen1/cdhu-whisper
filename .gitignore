@@ -9,6 +9,7 @@ backend/*.pdb
 backend/*.egg
 backend/*.egg-info/
 backend/dist/
+backend/temp/
 backend/build/
 backend/env/
 backend/venv/
