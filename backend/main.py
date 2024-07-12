@@ -29,7 +29,6 @@ async def transcribe(files: List[UploadFile] = File(...)):
 		with open(file_location, "wb+") as file_object:
 			file_object.write(file.file.read())
 		result = model.transcribe(file_location)
-		print(result['segments'])
 		transcriptions[file.filename] = {
 			'text': result['text'],
 			'json': result,  # Assuming result is already a JSON-like dictionary

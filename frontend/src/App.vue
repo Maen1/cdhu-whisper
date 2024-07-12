@@ -12,7 +12,7 @@
         />
         <button
           type="submit"
-          class="w-full bg-blue-500 hover:bg-blue-700 text-white font-medium py-2 px-2 rounded focus:outline-none focus:shadow-outline"
+          class="w-full bg-pink-500 hover:bg-pink-700 text-white font-medium py-2 px-2 rounded focus:outline-none focus:shadow-outline"
         >
           Transcribe
         </button>
@@ -25,22 +25,22 @@
 
 
       <!-- Button to Download All Transcriptions -->
-      <div v-if="Object.keys(results).length > 0" class="mt-6">
+      <div v-if="Object.keys(results).length > 1" class="mt-6">
         <button
           @click="downloadAllTranscriptions('txt')"
-          class="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          class="w-full bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
         >
           Download All as Text
         </button>
         <button
           @click="downloadAllTranscriptions('srt')"
-          class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-2"
+          class="w-full bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-2"
         >
           Download All as SRT
         </button>
         <button
           @click="downloadAllTranscriptions('json')"
-          class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-2"
+          class="w-full bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-2"
         >
           Download All as Json
         </button>
@@ -52,19 +52,19 @@
         <div class="mt-2 flex space-x-2">
           <button
             @click="downloadTranscription(filename, transcription.text, 'txt')"
-            class="bg-green-500 hover:bg-green-700 text-white font-medium py-1 px-2 rounded focus:outline-none focus:shadow-outline"
+            class="bg-indigo-500 hover:bg-indigo-700 text-white font-medium py-1 px-2 rounded focus:outline-none focus:shadow-outline"
           >
             Download as Text
           </button>
           <button
             @click="downloadTranscription(filename, JSON.stringify(transcription.json, null, 2), 'json')"
-            class="bg-yellow-500 hover:bg-yellow-700 text-white font-medium py-1 px-2 rounded focus:outline-none focus:shadow-outline"
+            class="bg-violet-500 hover:bg-violet-700 text-white font-medium py-1 px-2 rounded focus:outline-none focus:shadow-outline"
           >
             Download as JSON
           </button>
           <button
             @click="downloadTranscription(filename, transcription.srt, 'srt')"
-            class="bg-blue-500 hover:bg-blue-700 text-white font-medium py-1 px-2 rounded focus:outline-none focus:shadow-outline"
+            class="bg-fuchsia-500 hover:bg-fuchsia-700 text-white font-medium py-1 px-2 rounded focus:outline-none focus:shadow-outline"
           >
             Download as SRT
           </button>
@@ -134,7 +134,7 @@ export default {
         zip.file(`${filename}.${format}`, content);
       }
       const blob = await zip.generateAsync({ type: 'blob' });
-      saveAs(blob, `transcriptions.${format}.zip`);
+      saveAs(blob, `transcriptions_${format}.zip`);
     };
 
     return {
