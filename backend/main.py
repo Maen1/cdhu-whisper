@@ -1,5 +1,5 @@
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, File, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from datetime import timedelta
 from typing import List
@@ -21,14 +21,20 @@ app.add_middleware(
 	allow_headers=["*"],
 )
 
-@app.post("/transcribe/")
-async def transcribe(files: List[UploadFile] = File(...)):
+@app.post("/transcribe/{model_name}")
+async def transcribe(files: List[UploadFile] = File(...), model_name: str = None):
+	global model
+	model = whisper.load_model(model_name)
+	print("=====" * 34)
+	print(model_name)
+
 	transcriptions = {}
 	for file in files:
 		file_location = f"temp/{file.filename}"
 		with open(file_location, "wb+") as file_object:
 			file_object.write(file.file.read())
 		result = model.transcribe(file_location)
+		#result = model.transcribe(file_location, language="sw", task="translate")
 		transcriptions[file.filename] = {
 			'text': result['text'],
 			'json': result,  # Assuming result is already a JSON-like dictionary

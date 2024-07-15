@@ -3,13 +3,23 @@
     <div class="bg-white shadow-md rounded-lg p-8 w-full max-w-3xl">
       <h1 class="text-2xl font-medium mb-6 text-center">Upload Audio for Transcription</h1>
       <form @submit.prevent="handleSubmit" class="space-y-4">
-        <input
+       <div class="flex justify-between">
+         <input
           type="file"
           multiple
           @change="handleFileChange"
           required
-          class="block w-full text-sm text-gray-900 border border-gray-300 rounded cursor-pointer bg-gray-50 focus:outline-none p-1"
+          class="w-1/2 text-sm text-gray-900 border border-gray-300 rounded cursor-pointer bg-gray-50 focus:outline-none p-1"
         />
+          <select
+            v-model="selectedModel"
+            class=" w-1/2 text-sm text-gray-900 border border-gray-300 rounded cursor-pointer bg-gray-50 focus:outline-none p-2 ml-4"
+          >
+            <option v-for="model in models" :key="model" :value="model">
+              {{ model }}
+            </option>
+          </select>
+        </div>
         <button
           type="submit"
           class="w-full bg-pink-500 hover:bg-pink-700 text-white font-medium py-2 px-2 rounded focus:outline-none focus:shadow-outline"
@@ -85,6 +95,10 @@ export default {
     const files = ref([]);
     const results = ref({});
     const isLoading = ref(false);
+    const selectedModel = ref('tiny');
+    const models = ref(['tiny.en', 'tiny', 'base.en', 'base', 'small.en', 'small', 'medium.en', 'medium', 'large-v1', 'large-v2', 'large-v3', 'large']);
+
+    console.log(selectedModel.value)
 
     const handleFileChange = (event) => {
       files.value = event.target.files;
@@ -97,7 +111,9 @@ export default {
         formData.append('files', file);
       }
 
-      const response = await fetch('http://localhost:8000/transcribe/', {
+      const url = new URL('http://localhost:8000/transcribe/'+selectedModel.value);
+
+      const response = await fetch(url, {
         method: 'POST',
         body: formData,
       });
@@ -144,6 +160,8 @@ export default {
       downloadAllTranscriptions,
       results,
       isLoading,
+      selectedModel,
+      models,
     };
   },
 };
