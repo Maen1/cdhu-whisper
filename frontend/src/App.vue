@@ -84,46 +84,54 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { ref } from 'vue';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 
-
 export default {
   setup() {
-    const files = ref([]);
-    const results = ref({});
-    const isLoading = ref(false);
-    const selectedModel = ref('tiny');
-    const models = ref(['tiny.en', 'tiny', 'base.en', 'base', 'small.en', 'small', 'medium.en', 'medium', 'large-v1', 'large-v2', 'large-v3', 'large']);
+    // Type definitions for reactive variables
+    const files = ref<File[]>([]);
+    const results = ref<Record<string, any>>({});
+    const isLoading = ref<boolean>(false);
+    const selectedModel = ref<string>('tiny');
+    const models = ref<string[]>(['tiny.en', 'tiny', 'base.en', 'base', 'small.en', 'small', 'medium.en', 'medium', 'large-v1', 'large-v2', 'large-v3', 'large']);
 
-    console.log(selectedModel.value)
+    console.log(selectedModel.value);
 
-    const handleFileChange = (event) => {
-      files.value = event.target.files;
+    // Type the event parameter as InputEvent and use target as HTMLInputElement
+    const handleFileChange = (event: Event) => {
+      const target = event.target as HTMLInputElement;
+      if (target.files) {
+        files.value = Array.from(target.files);
+      }
     };
 
     const handleSubmit = async () => {
       isLoading.value = true;
       const formData = new FormData();
+
+      // Type `file` as `File`
       for (const file of files.value) {
         formData.append('files', file);
       }
 
-      const url = new URL('http://localhost:8000/transcribe/'+selectedModel.value);
+      const url = new URL(`http://localhost:8000/transcribe/${selectedModel.value}`);
 
-      const response = await fetch(url, {
+      // Add fetch typing
+      const response = await fetch(url.toString(), {
         method: 'POST',
         body: formData,
       });
 
-      const data = await response.json();
+      // Type the response as any, or define a proper type if the API's structure is known
+      const data: any = await response.json();
       results.value = data;
       isLoading.value = false;
     };
 
-    const downloadTranscription = (filename, content, format) => {
+    const downloadTranscription = (filename: string, content: string, format: string) => {
       const blob = new Blob([content], { type: 'text/plain' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -135,20 +143,26 @@ export default {
       window.URL.revokeObjectURL(url);
     };
 
-    const downloadAllTranscriptions = async (format) => {
+    const downloadAllTranscriptions = async (format: 'txt' | 'srt' | 'json') => {
       const zip = new JSZip();
+
+      // Type `results.value` as a dictionary of any type
       for (const [filename, transcription] of Object.entries(results.value)) {
-        let content;
+        let content: string | undefined;
+
         if (format === 'txt') {
           content = transcription.text;
         } else if (format === 'srt') {
           content = transcription.srt;
-        }
-        else if (format === 'json') {
+        } else if (format === 'json') {
           content = JSON.stringify(transcription.json, null, 2);
         }
-        zip.file(`${filename}.${format}`, content);
+
+        if (content) {
+          zip.file(`${filename}.${format}`, content);
+        }
       }
+
       const blob = await zip.generateAsync({ type: 'blob' });
       saveAs(blob, `transcriptions_${format}.zip`);
     };
@@ -166,6 +180,7 @@ export default {
   },
 };
 </script>
+
 
 <style>
 /* Optionally, you can add additional styles here */
