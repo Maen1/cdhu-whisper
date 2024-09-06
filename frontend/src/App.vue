@@ -117,7 +117,7 @@ export default {
         formData.append('files', file);
       }
 
-      const url = new URL(`http://localhost:8000/transcribe/${selectedModel.value}`);
+      const url = new URL(`http://127.0.0.1:8000/transcribe/${selectedModel.value}`);
 
       // Add fetch typing
       const response = await fetch(url.toString(), {
